@@ -5,7 +5,7 @@ import random
 # 2. a_i - a_x = 1 for x>i -> a_i - 1 = r_i, a_x = r_x
 # given input sequence a, output modified sequence p s.t. p_i is either = r_i or -0.1(using an impossible value to represent unsured r_i)
 # as other lists in this project, we set p[0] = 0 for convenience 
-def special_case(a):
+def fix_special_case(a):
     length = len(a)
     p = [0]+ [-0.1]* (length-1)
     #check case 1
@@ -29,3 +29,20 @@ def special_case(a):
         if mark == True:
             break 
     return p 
+
+# simple deduction from fix points that might actually work well 
+# input p from above function, return the actual guess 
+def deduce_all(p):
+    length = len(p)
+    for i in range (0,length):
+        if p[i] != -0.1:
+            for j in range(i+1,length): #i, j are fixed points with knwon total votes, now deducing values between interval [i,j]
+                if p[j]!= -0.1:
+                    if j - 1 == i: #i and j are consecutive, nothing need to be deduced  
+                        None
+                    else: 
+                        if (p[i]==p[j]):
+                            for q in range(i+1,j):
+                                p[q] = p[i]
+                        elif #add randomized? 
+                        
