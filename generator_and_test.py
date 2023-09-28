@@ -1,13 +1,11 @@
-#!/usr/bin/python3
 
 # HW 2 for CS386
 import random
 import statistics
-from case1_attack import * 
+import attack 
 
 # --------------------------------------------------------------------
 # data generator
-
 # data representation is four lists. 
 # The first is sequence s 
 # The second is a sequence r s.t. r_i = sum_0^i s_i, which is the real total votes at each real time. 
@@ -49,26 +47,37 @@ def generate_data(n):
 # performs 1000 run on n=50000 and returns a tuple of the
 # accuracy of the attack without and with prior info respectively.
 
-def evaluate(n):
+def evaluate(n): # n is the number of bits 
     case1_success_rate_gather = []
     case1_stats = []
-    #case2_success_rate_gather = []
-    #case2_stats = []
-    for i in range (50000):
-        (sequence_s, real, released, guess) = generate_data(n)
-
-        case1_guess = attack1 (released)
-        #case2_guess = attack2 (released)
+    case2_success_rate_gather = []
+    case2_stats = []
+    for i in range (4): # how many times we perform the attack 
+        print(i)
+        generaed_list = generate_data(n)
+        released = generaed_list[2]
+        real = generaed_list[1] 
+        g = generaed_list[3]
+        print("released", released)
+        print("real", real)
+        print("g", g)
+        case1_guess = attack.attack1(released)
+        case2_guess = attack.attack2(released,g)
+        print("case2_guess", case2_guess)
 
         case1_correct = 0
-        #case2_correct = 0
+        case2_correct = 0
         for i in range(1,n+1):
             if case1_guess[i] == real[i]:
                 case1_correct += 1
-            #if case2_guess[i] == real[i]:
-            #    case2_correct += 1
-        success_rate = case1_correct / n
-        case1_success_rate_gather.append(success_rate)
+            if case2_guess[i] == real[i]:
+                case2_correct += 1
+        success_rate_1 = case1_correct / n
+        success_rate_2 = case2_correct / n
+        case1_success_rate_gather.append(success_rate_1)
+        case2_success_rate_gather.append(success_rate_2)
     case1_stats.append(statistics.mean(case1_success_rate_gather))
     case1_stats.append(statistics.stdev(case1_success_rate_gather))
-    return case1_stats 
+    case2_stats.append(statistics.mean(case2_success_rate_gather))
+    case2_stats.append(statistics.stdev(case2_success_rate_gather))
+    return (case1_stats, case2_stats) 
